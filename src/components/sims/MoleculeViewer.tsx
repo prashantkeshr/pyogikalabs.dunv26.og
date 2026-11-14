@@ -40,6 +40,7 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
   const rotX      = useRef(-0.2);
   const autoRot   = useRef(true);
   const drag      = useRef<{ x: number; y: number } | null>(null);
+  const zoom      = useRef(1.0);
   const [internalIdx, setInternalIdx] = useState(0);
   const molIdx = externalIdx ?? internalIdx;
   const setMolIdx = (i: number) => { setInternalIdx(i); onMolIdx?.(i); };
@@ -53,7 +54,7 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
     if (!ctx) return;
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
-    const scale = Math.min(W, H) * (compact ? 0.17 : 0.19);
+    const scale = Math.min(W, H) * (compact ? 0.17 : 0.19) * zoom.current;
     const fov = 420;
 
     ctx.clearRect(0, 0, W, H);
@@ -127,24 +128,62 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    // Set canvas resolution
+
     const setSize = () => {
       const rect = canvas.getBoundingClientRect();
-      canvas.width  = rect.width  * window.devicePixelRatio;
-      canvas.height = rect.height * window.devicePixelRatio;
+      const w = rect.width  || canvas.offsetWidth  || 400;
+      const h = rect.height || canvas.offsetHeight || 300;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width  = w * dpr;
+      canvas.height = h * dpr;
       const ctx = canvas.getContext('2d');
-      if (ctx) ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      if (ctx) ctx.scale(dpr, dpr);
     };
     setSize();
     const ro = new ResizeObserver(setSize);
     ro.observe(canvas);
-    return () => ro.disconnect();
+
+    // Wheel zoom — prevent page scroll when over canvas
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      zoom.current = Math.max(0.25, Math.min(4.0, zoom.current * (1 - e.deltaY * 0.001)));
+    };
+    canvas.addEventListener('wheel', onWheel, { passive: false });
+
+    // Pinch zoom (touch)
+    let lastPinchDist = 0;
+    const onTouchStartPinch = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lastPinchDist = Math.sqrt(dx*dx + dy*dy);
+      }
+    };
+    const onTouchMovePinch = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (lastPinchDist > 0) zoom.current = Math.max(0.25, Math.min(4.0, zoom.current * (dist / lastPinchDist)));
+        lastPinchDist = dist;
+      }
+    };
+    canvas.addEventListener('touchstart', onTouchStartPinch, { passive: false });
+    canvas.addEventListener('touchmove',  onTouchMovePinch,  { passive: false });
+
+    return () => {
+      ro.disconnect();
+      canvas.removeEventListener('wheel', onWheel);
+      canvas.removeEventListener('touchstart', onTouchStartPinch);
+      canvas.removeEventListener('touchmove',  onTouchMovePinch);
+    };
   }, []);
 
   useEffect(() => {
-    // Reset rotation on molecule change
-    rotY.current = 0.3;
-    rotX.current = -0.2;
+    rotY.current  = 0.3;
+    rotX.current  = -0.2;
+    zoom.current  = 1.0;
   }, [molIdx]);
 
   useEffect(() => {
@@ -183,13 +222,13 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
       <canvas
         ref={canvasRef}
         className="sim-canvas flex-1 w-full"
-        style={{ minHeight: compact ? 160 : 220 }}
+        style={{ minHeight: compact ? 160 : 260, touchAction: 'none', display: 'block' }}
         onMouseDown={e => onDown(e.clientX, e.clientY)}
         onMouseMove={e => onMove(e.clientX, e.clientY)}
         onMouseUp={onUp}
         onMouseLeave={onUp}
-        onTouchStart={e => { e.preventDefault(); const t = e.touches[0]; onDown(t.clientX, t.clientY); }}
-        onTouchMove={e => { e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); }}
+        onTouchStart={e => { if (e.touches.length === 1) { e.preventDefault(); const t = e.touches[0]; onDown(t.clientX, t.clientY); } }}
+        onTouchMove={e => { if (e.touches.length === 1) { e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); } }}
         onTouchEnd={onUp}
       />
       {/* Molecule tabs */}

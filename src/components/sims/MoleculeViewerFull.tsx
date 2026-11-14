@@ -15,7 +15,7 @@ export default function MoleculeViewerFull() {
             <MoleculeViewer molIdx={idx} onMolIdx={setIdx} />
           </div>
         </div>
-        <p className="text-xs text-slate-600 text-center mt-2">Drag to rotate · Touch supported</p>
+        <p className="text-xs text-slate-600 text-center mt-2">Drag to rotate · Scroll to zoom · Pinch on touch</p>
       </div>
 
       {/* Info panel */}

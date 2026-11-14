@@ -60,10 +60,23 @@ export function useThreeScene(
     }
     mount.appendChild(renderer.domElement);
 
+    // Allow OrbitControls to capture pointer/touch/wheel events before the browser
+    renderer.domElement.style.touchAction = 'none';
+    renderer.domElement.style.display = 'block'; // remove inline-element gap
+    // Prevent page scroll when the cursor is over the canvas (needed for wheel zoom)
+    const stopWheel = (e: WheelEvent) => e.preventDefault();
+    renderer.domElement.addEventListener('wheel', stopWheel, { passive: false });
+
     // ── Controls ─────────────────────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.07;
+    controls.enableDamping  = true;
+    controls.dampingFactor  = 0.07;
+    controls.enableZoom     = true;
+    controls.zoomSpeed      = 1.2;
+    controls.rotateSpeed    = 0.8;
+    controls.panSpeed       = 0.8;
+    controls.minDistance    = 0.5;
+    controls.maxDistance    = 600;
 
     // ── Default lighting ─────────────────────────────────────────────────
     scene.add(new THREE.AmbientLight(0xffffff, 0.55));
@@ -110,6 +123,7 @@ export function useThreeScene(
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      renderer.domElement.removeEventListener('wheel', stopWheel);
       userCleanup?.();
       controls.dispose();
       renderer.dispose();

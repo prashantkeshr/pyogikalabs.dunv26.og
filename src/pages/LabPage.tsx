@@ -17,12 +17,20 @@ const SIMS: Record<string, React.LazyExoticComponent<() => React.ReactElement>> 
   'cell-structure':    lazy(() => import('@/components/sims/CellStructureSim')),
   'trig-circle':       lazy(() => import('@/components/sims/TrigCircleSim')),
   // 3D labs
-  'dna-structure':     lazy(() => import('@/components/sims/DNASim')),
-  'crystal-structure': lazy(() => import('@/components/sims/CrystalSim')),
-  'atomic-orbital':    lazy(() => import('@/components/sims/AtomicOrbitalSim')),
-  'surface-plotter':   lazy(() => import('@/components/sims/SurfacePlotterSim')),
-  'orbital-mechanics': lazy(() => import('@/components/sims/OrbitalMechanicsSim')),
-  'electric-field':    lazy(() => import('@/components/sims/ElectricField3DSim')),
+  'dna-structure':          lazy(() => import('@/components/sims/DNASim')),
+  'crystal-structure':      lazy(() => import('@/components/sims/CrystalSim')),
+  'atomic-orbital':         lazy(() => import('@/components/sims/AtomicOrbitalSim')),
+  'surface-plotter':        lazy(() => import('@/components/sims/SurfacePlotterSim')),
+  'orbital-mechanics':      lazy(() => import('@/components/sims/OrbitalMechanicsSim')),
+  'electric-field':         lazy(() => import('@/components/sims/ElectricField3DSim')),
+  // New interactive labs
+  'rutherford-scattering':  lazy(() => import('@/components/sims/RutherfordSim')),
+  'fractional-distillation':lazy(() => import('@/components/sims/FractionalDistillationSim')),
+  'cathode-ray':            lazy(() => import('@/components/sims/CathodeRaySim')),
+  'electrolysis':           lazy(() => import('@/components/sims/ElectrolysisSim')),
+  'rate-of-reaction':       lazy(() => import('@/components/sims/RateOfReactionSim')),
+  'rusting':                lazy(() => import('@/components/sims/RustingSim')),
+  'balancing-equations':    lazy(() => import('@/components/sims/BalancingEqSim')),
 };
 
 const SUBJECT_COLORS: Record<string, string> = {

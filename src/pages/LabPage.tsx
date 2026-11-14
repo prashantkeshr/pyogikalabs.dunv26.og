@@ -4,10 +4,17 @@ import { ArrowLeft } from 'lucide-react';
 import { LABS } from '@/data/labs';
 
 const SIMS: Record<string, React.LazyExoticComponent<() => React.ReactElement>> = {
-  'pendulum':         lazy(() => import('@/components/sims/PendulumSim')),
-  'wave-interference':lazy(() => import('@/components/sims/WaveSim')),
-  'molecule-vsepr':   lazy(() => import('@/components/sims/MoleculeViewerFull')),
-  'periodic-table':   lazy(() => import('@/components/sims/PeriodicTable')),
+  'pendulum':          lazy(() => import('@/components/sims/PendulumSim')),
+  'wave-interference': lazy(() => import('@/components/sims/WaveSim')),
+  'molecule-vsepr':    lazy(() => import('@/components/sims/MoleculeViewerFull')),
+  'periodic-table':    lazy(() => import('@/components/sims/PeriodicTable')),
+  'projectile':        lazy(() => import('@/components/sims/ProjectileSim')),
+  'ohm-law':           lazy(() => import('@/components/sims/OhmSim')),
+  'states-matter':     lazy(() => import('@/components/sims/StatesMatterSim')),
+  'titration':         lazy(() => import('@/components/sims/TitrationSim')),
+  'atom-builder':      lazy(() => import('@/components/sims/AtomBuilderSim')),
+  'cell-structure':    lazy(() => import('@/components/sims/CellStructureSim')),
+  'trig-circle':       lazy(() => import('@/components/sims/TrigCircleSim')),
 };
 
 const SUBJECT_COLORS: Record<string, string> = {

@@ -41,8 +41,28 @@ export const LABS: Lab[] = [
     description: 'Launch at any angle and speed. See range, height, and time of flight update live.',
     difficulty: 'Foundation',
     tags: ['Kinematics', 'Vectors', 'Motion'],
-    available: false,
+    available: true,
     syllabus: ['IGCSE', 'CBSE', 'JEE'],
+  },
+  {
+    id: 'ohm-law',
+    title: "Ohm's Law",
+    subject: 'physics',
+    description: 'Animated circuit with live V-I graph. Adjust voltage and resistance — watch current and power update.',
+    difficulty: 'Foundation',
+    tags: ['Electricity', 'Circuits', 'V-I Graph'],
+    available: true,
+    syllabus: ['IGCSE', 'CBSE', 'JEE'],
+  },
+  {
+    id: 'states-matter',
+    title: 'States of Matter',
+    subject: 'physics',
+    description: 'Particle simulation of solid, liquid and gas. Adjust temperature and pressure — watch phase transitions.',
+    difficulty: 'Foundation',
+    tags: ['Kinetic Theory', 'Phase Change', 'Particles'],
+    available: true,
+    syllabus: ['IGCSE', 'CBSE'],
   },
   {
     id: 'electric-field',
@@ -66,6 +86,16 @@ export const LABS: Lab[] = [
   },
 
   // Biology
+  {
+    id: 'cell-structure',
+    title: 'Cell Structure Explorer',
+    subject: 'biology',
+    description: 'Interactive animal and plant cell. Click any organelle to learn its structure and function.',
+    difficulty: 'Foundation',
+    tags: ['Cell Biology', 'Organelles', 'Animal vs Plant'],
+    available: true,
+    syllabus: ['IGCSE', 'CBSE', 'NEET'],
+  },
   {
     id: 'cell-osmosis',
     title: 'Osmosis & Diffusion',
@@ -129,13 +159,23 @@ export const LABS: Lab[] = [
     syllabus: ['IGCSE', 'CBSE', 'JEE', 'NEET'],
   },
   {
+    id: 'atom-builder',
+    title: 'Atom Builder',
+    subject: 'chemistry',
+    description: 'Add protons, neutrons and electrons to build any atom. See shell model, electron config, and ionic tendency.',
+    difficulty: 'Foundation',
+    tags: ['Atomic Structure', 'Electron Config', 'Ions'],
+    available: true,
+    syllabus: ['IGCSE', 'CBSE', 'JEE', 'NEET'],
+  },
+  {
     id: 'titration',
     title: 'Acid-Base Titration',
     subject: 'chemistry',
     description: 'High-fidelity burette simulator. Watch pH change as you add titrant drop by drop.',
     difficulty: 'Intermediate',
     tags: ['Titration', 'pH', 'Equilibrium'],
-    available: false,
+    available: true,
     syllabus: ['IGCSE', 'CBSE', 'JEE'],
   },
   {
@@ -150,6 +190,16 @@ export const LABS: Lab[] = [
   },
 
   // Math
+  {
+    id: 'trig-circle',
+    title: 'Trigonometric Circle',
+    subject: 'math',
+    description: 'Interactive unit circle — drag the angle, watch sin/cos/tan update live with wave visualization.',
+    difficulty: 'Foundation',
+    tags: ['Trigonometry', 'Unit Circle', 'Waves'],
+    available: true,
+    syllabus: ['IGCSE', 'CBSE', 'JEE'],
+  },
   {
     id: 'function-plotter',
     title: 'Function Plotter',

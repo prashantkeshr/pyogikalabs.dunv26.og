@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { LABS } from '@/data/labs';
+import { useSEO } from '@/hooks/useSEO';
 
 const SIMS: Record<string, React.LazyExoticComponent<() => React.ReactElement>> = {
   'pendulum':          lazy(() => import('@/components/sims/PendulumSim')),
@@ -15,6 +16,13 @@ const SIMS: Record<string, React.LazyExoticComponent<() => React.ReactElement>> 
   'atom-builder':      lazy(() => import('@/components/sims/AtomBuilderSim')),
   'cell-structure':    lazy(() => import('@/components/sims/CellStructureSim')),
   'trig-circle':       lazy(() => import('@/components/sims/TrigCircleSim')),
+  // 3D labs
+  'dna-structure':     lazy(() => import('@/components/sims/DNASim')),
+  'crystal-structure': lazy(() => import('@/components/sims/CrystalSim')),
+  'atomic-orbital':    lazy(() => import('@/components/sims/AtomicOrbitalSim')),
+  'surface-plotter':   lazy(() => import('@/components/sims/SurfacePlotterSim')),
+  'orbital-mechanics': lazy(() => import('@/components/sims/OrbitalMechanicsSim')),
+  'electric-field':    lazy(() => import('@/components/sims/ElectricField3DSim')),
 };
 
 const SUBJECT_COLORS: Record<string, string> = {
@@ -27,6 +35,13 @@ const SUBJECT_COLORS: Record<string, string> = {
 export default function LabPage() {
   const { id } = useParams<{ id: string }>();
   const lab = LABS.find(l => l.id === id);
+
+  useSEO(lab ? {
+    title: lab.title,
+    description: `${lab.description} Interactive ${lab.subject} lab for ${lab.syllabus.join(', ')} students.`,
+    canonical: `/lab/${lab.id}`,
+    keywords: [...lab.tags, lab.subject, ...lab.syllabus, 'virtual lab', 'interactive simulation'].join(', '),
+  } : {});
 
   if (!lab) {
     return (

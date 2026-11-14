@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+          http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Static pages -->
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/labs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+
+  <!-- Physics labs -->
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/pendulum</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/wave-interference</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/projectile</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/ohm-law</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/states-matter</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/electric-field</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/orbital-mechanics</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+
+  <!-- Biology labs -->
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/cell-structure</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/dna-structure</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+
+  <!-- Chemistry labs -->
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/molecule-vsepr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/periodic-table</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/atom-builder</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/titration</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/crystal-structure</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/atomic-orbital</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+
+  <!-- Math labs -->
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/trig-circle</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+  <url>
+    <loc>https://prayogikalabs.dhurta.org/lab/surface-plotter</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-11-14</lastmod>
+  </url>
+
+</urlset>

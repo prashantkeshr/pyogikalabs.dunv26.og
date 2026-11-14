@@ -1,10 +1,18 @@
 import { useSearchParams } from 'react-router-dom';
 import LabsGrid from '@/components/LabsGrid';
 import type { Subject } from '@/data/labs';
+import { useSEO } from '@/hooks/useSEO';
 
 export default function LabsPage() {
   const [params] = useSearchParams();
   const sub = params.get('subject') as Subject | null;
+
+  useSEO({
+    title: sub ? `${sub.charAt(0).toUpperCase() + sub.slice(1)} Labs` : 'All Science Labs',
+    description: 'Browse 17+ free interactive science labs — Physics, Biology, Chemistry, and Mathematics simulations for CBSE, JEE, NEET, IGCSE, and IB students.',
+    canonical: '/labs',
+    keywords: 'virtual labs, science simulations, physics labs, chemistry labs, biology labs, math labs, CBSE, JEE, NEET, IGCSE, IB',
+  });
 
   return (
     <main>

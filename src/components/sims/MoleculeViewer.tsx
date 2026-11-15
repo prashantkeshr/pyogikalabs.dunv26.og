@@ -54,8 +54,8 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
     if (!ctx) return;
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
-    const scale = Math.min(W, H) * (compact ? 0.17 : 0.19) * zoom.current;
-    const fov = 420;
+    const scale = Math.min(W, H) * (compact ? 0.22 : 0.26) * zoom.current;
+    const fov = 5;
 
     ctx.clearRect(0, 0, W, H);
 

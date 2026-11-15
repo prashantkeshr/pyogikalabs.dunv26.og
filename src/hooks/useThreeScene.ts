@@ -67,6 +67,56 @@ export function useThreeScene(
     const stopWheel = (e: WheelEvent) => e.preventDefault();
     renderer.domElement.addEventListener('wheel', stopWheel, { passive: false });
 
+    // ── Zoom overlay buttons ─────────────────────────────────────────────
+    const zoomOverlay = document.createElement('div');
+    zoomOverlay.style.cssText = `
+      position:absolute; bottom:12px; right:12px;
+      display:flex; flex-direction:column; gap:6px; z-index:10;
+      pointer-events:all;
+    `;
+    const mkBtn = (label: string, title: string, onClick: () => void) => {
+      const btn = document.createElement('button');
+      btn.textContent = label;
+      btn.title = title;
+      btn.style.cssText = `
+        width:32px; height:32px; border-radius:8px;
+        border:1px solid rgba(100,116,139,0.45);
+        background:rgba(2,8,24,0.75); color:#cbd5e1;
+        font-size:18px; font-weight:700; line-height:1;
+        cursor:pointer; display:flex; align-items:center; justify-content:center;
+        transition:background 0.15s, border-color 0.15s, color 0.15s;
+        font-family:inherit; padding:0;
+      `;
+      btn.addEventListener('mouseenter', () => {
+        btn.style.background = 'rgba(249,115,22,0.35)';
+        btn.style.borderColor = 'rgba(249,115,22,0.5)';
+        btn.style.color = '#fff';
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.background = 'rgba(2,8,24,0.75)';
+        btn.style.borderColor = 'rgba(100,116,139,0.45)';
+        btn.style.color = '#cbd5e1';
+      });
+      btn.addEventListener('click', onClick);
+      return btn;
+    };
+    zoomOverlay.appendChild(mkBtn('+', 'Zoom in', () => {
+      camera.position.multiplyScalar(0.82);
+      controls.update();
+    }));
+    zoomOverlay.appendChild(mkBtn('−', 'Zoom out', () => {
+      camera.position.multiplyScalar(1.22);
+      controls.update();
+    }));
+    zoomOverlay.appendChild(mkBtn('↺', 'Reset view', () => {
+      camera.position.set(...(opts.cameraPos ?? [0, 4, 10]));
+      camera.lookAt(0, 0, 0);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    }));
+    mount.style.position = 'relative';
+    mount.appendChild(zoomOverlay);
+
     // ── Controls ─────────────────────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping  = true;
@@ -134,6 +184,7 @@ export function useThreeScene(
       });
       scene.clear();
       if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+      if (mount.contains(zoomOverlay)) mount.removeChild(zoomOverlay);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);

@@ -136,8 +136,9 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
       const dpr = window.devicePixelRatio || 1;
       canvas.width  = w * dpr;
       canvas.height = h * dpr;
-      const ctx = canvas.getContext('2d');
-      if (ctx) ctx.scale(dpr, dpr);
+      // No ctx.scale() here — it accumulates on every ResizeObserver call,
+      // shifting the molecule further offscreen each time. The draw function
+      // operates in raw pixel space (canvas.width × canvas.height).
     };
     setSize();
     const ro = new ResizeObserver(setSize);
@@ -219,18 +220,40 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
 
   return (
     <div className="flex flex-col h-full">
-      <canvas
-        ref={canvasRef}
-        className="sim-canvas flex-1 w-full"
-        style={{ minHeight: compact ? 160 : 260, touchAction: 'none', display: 'block' }}
-        onMouseDown={e => onDown(e.clientX, e.clientY)}
-        onMouseMove={e => onMove(e.clientX, e.clientY)}
-        onMouseUp={onUp}
-        onMouseLeave={onUp}
-        onTouchStart={e => { if (e.touches.length === 1) { e.preventDefault(); const t = e.touches[0]; onDown(t.clientX, t.clientY); } }}
-        onTouchMove={e => { if (e.touches.length === 1) { e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); } }}
-        onTouchEnd={onUp}
-      />
+      {/* Canvas + zoom overlay */}
+      <div className="relative flex-1 min-h-0">
+        <canvas
+          ref={canvasRef}
+          className="sim-canvas w-full h-full"
+          style={{ touchAction: 'none', display: 'block', minHeight: compact ? 160 : 320 }}
+          onMouseDown={e => onDown(e.clientX, e.clientY)}
+          onMouseMove={e => onMove(e.clientX, e.clientY)}
+          onMouseUp={onUp}
+          onMouseLeave={onUp}
+          onTouchStart={e => { if (e.touches.length === 1) { e.preventDefault(); const t = e.touches[0]; onDown(t.clientX, t.clientY); } }}
+          onTouchMove={e => { if (e.touches.length === 1) { e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); } }}
+          onTouchEnd={onUp}
+        />
+        {/* Zoom buttons */}
+        <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 z-10">
+          <button
+            onClick={() => { zoom.current = Math.min(4.0, zoom.current * 1.25); autoRot.current = false; }}
+            className="w-8 h-8 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:border-orange-500/50 hover:text-white transition-colors text-lg font-bold leading-none flex items-center justify-center"
+            title="Zoom in">+</button>
+          <button
+            onClick={() => { zoom.current = Math.max(0.25, zoom.current * 0.8); autoRot.current = false; }}
+            className="w-8 h-8 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:border-orange-500/50 hover:text-white transition-colors text-lg font-bold leading-none flex items-center justify-center"
+            title="Zoom out">−</button>
+          <button
+            onClick={() => { zoom.current = 1.0; rotY.current = 0.3; rotX.current = -0.2; autoRot.current = true; }}
+            className="w-8 h-8 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-400 hover:bg-slate-700/80 hover:text-white transition-colors text-xs font-semibold flex items-center justify-center"
+            title="Reset view">↺</button>
+        </div>
+        {/* Hint */}
+        <div className="absolute bottom-3 left-3 text-xs text-slate-600 pointer-events-none">
+          Drag · Scroll to zoom
+        </div>
+      </div>
       {/* Molecule tabs */}
       <div className="flex flex-wrap gap-1 justify-center px-2 pb-1 pt-2">
         {MOLECULES.map((m, i) => (

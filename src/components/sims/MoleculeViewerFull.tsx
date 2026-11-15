@@ -11,7 +11,7 @@ export default function MoleculeViewerFull() {
       {/* Viewer */}
       <div className="flex-1 min-w-0">
         <div className="rounded-xl border border-slate-800 overflow-hidden bg-[#0a0d1a]">
-          <div style={{ height: 360 }}>
+          <div style={{ height: 500 }}>
             <MoleculeViewer molIdx={idx} onMolIdx={setIdx} />
           </div>
         </div>

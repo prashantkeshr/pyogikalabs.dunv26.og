@@ -106,7 +106,7 @@ export default function LabPage() {
       </div>
 
       {/* Simulation */}
-      <div className="rounded-xl border border-slate-800 bg-surface p-4 sm:p-6">
+      <div className="rounded-xl border border-slate-800 bg-surface p-4 sm:p-6 min-h-[560px]">
         {Sim ? (
           <Suspense fallback={<div className="h-60 flex items-center justify-center text-slate-500 text-sm">Loading simulation…</div>}>
             <Sim />

@@ -21,6 +21,7 @@ export default function PendulumSim() {
   const [length, setLength]     = useState(1.4);
   const [gravIdx, setGravIdx]   = useState(0);
   const [dampIdx, setDampIdx]   = useState(1);
+  const [cvZoom, setCvZoom]     = useState(1);
 
   const gravity  = GRAVITY_OPTS[gravIdx].value;
   const damping  = DAMPING_OPTS[dampIdx].value;
@@ -37,9 +38,8 @@ export default function PendulumSim() {
     if (!canvas) return;
     const setSize = () => {
       const dpr = window.devicePixelRatio;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width  = rect.width  * dpr;
-      canvas.height = rect.height * dpr;
+      canvas.width  = (canvas.offsetWidth  || 400) * dpr;
+      canvas.height = (canvas.offsetHeight || 300) * dpr;
       const ctx = canvas.getContext('2d');
       ctx?.scale(dpr, dpr);
     };
@@ -169,7 +169,15 @@ export default function PendulumSim() {
 
   return (
     <div className="flex flex-col gap-3">
-      <canvas ref={canvasRef} className="sim-canvas w-full rounded-lg" style={{ height: 300, background: 'rgba(14,19,38,0.6)' }} />
+      <div className="relative overflow-hidden rounded-lg" style={{ height: 300, background: 'rgba(14,19,38,0.6)' }}>
+        <canvas ref={canvasRef} className="sim-canvas w-full h-full"
+          style={{ transform: `scale(${cvZoom})`, transformOrigin: 'center', display: 'block' }} />
+        <div className="absolute bottom-2 right-2 flex flex-col gap-1 z-10">
+          <button onClick={() => setCvZoom(z => Math.min(3, z * 1.25))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">+</button>
+          <button onClick={() => setCvZoom(z => Math.max(0.4, z * 0.8))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">−</button>
+          <button onClick={() => setCvZoom(1)} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-400 hover:bg-slate-700/80 hover:text-white transition-colors text-xs flex items-center justify-center">↺</button>
+        </div>
+      </div>
 
       {/* Controls */}
       <div className="grid grid-cols-2 gap-3">

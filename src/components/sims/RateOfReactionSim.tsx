@@ -19,6 +19,7 @@ export default function RateOfReactionSim(): React.ReactElement {
   const [elapsed, setElapsed] = useState(0);
   const [gasVol, setGasVol] = useState(0);
   const [data, setData] = useState<DataPoint[]>([]);
+  const [cvZoom, setCvZoom] = useState(1);
   const [finished, setFinished] = useState(false);
 
   const runRef   = useRef(false);
@@ -204,7 +205,14 @@ export default function RateOfReactionSim(): React.ReactElement {
   return (
     <div className="flex flex-col lg:flex-row gap-4">
       <div className="flex-1 min-w-0">
-        <canvas ref={canvasRef} width={320} height={330} className="w-full max-w-sm mx-auto rounded-lg block" style={{background:'#080d1a'}} />
+        <div className="relative overflow-hidden rounded-lg max-w-sm mx-auto" style={{ background: '#080d1a' }}>
+          <canvas ref={canvasRef} width={320} height={330} className="w-full block" style={{ transform: `scale(${cvZoom})`, transformOrigin: 'center' }} />
+          <div className="absolute bottom-2 right-2 flex flex-col gap-1 z-10">
+            <button onClick={() => setCvZoom(z => Math.min(3, z * 1.25))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">+</button>
+            <button onClick={() => setCvZoom(z => Math.max(0.4, z * 0.8))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">−</button>
+            <button onClick={() => setCvZoom(1)} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-400 hover:bg-slate-700/80 hover:text-white transition-colors text-xs flex items-center justify-center">↺</button>
+          </div>
+        </div>
         <div className="mt-3 grid grid-cols-4 gap-2 text-xs">
           {[['Concentration',conc],['Temperature',temp],['Time',`${elapsed} s`],['CO₂',`${gasVol} mL`]].map(([k,v])=>(
             <div key={k} className="bg-slate-800/60 border border-slate-700/50 rounded px-2 py-1.5 text-center">

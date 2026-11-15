@@ -17,14 +17,38 @@ function MolViewer({ mol }: { mol: Molecule }) {
   const ry = useRef(0.3), rx = useRef(-0.2);
   const drag = useRef<{x:number;y:number}|null>(null);
   const auto = useRef(true);
+  const zoom = useRef(1.0);
+
+  // Compute bounding radius so every molecule auto-fits the canvas
+  const molExtent = (() => {
+    let max = 0;
+    for (const a of mol.atoms) {
+      const r = Math.sqrt(a.position[0]**2 + a.position[1]**2 + a.position[2]**2);
+      max = Math.max(max, r + a.radius * 0.52);
+    }
+    return max || 1;
+  })();
 
   useEffect(() => {
     const c = ref.current; if (!c) return;
-    const resize = () => { const dpr=window.devicePixelRatio, r=c.getBoundingClientRect(); c.width=r.width*dpr; c.height=r.height*dpr; c.getContext('2d')?.scale(dpr,dpr); };
-    resize(); const ro=new ResizeObserver(resize); ro.observe(c); return ()=>ro.disconnect();
+    const resize = () => {
+      const dpr = window.devicePixelRatio;
+      const r = c.getBoundingClientRect();
+      c.width = r.width * dpr;
+      c.height = r.height * dpr;
+      // canvas.width assignment resets context state — scale is fresh each time
+      c.getContext('2d')?.scale(dpr, dpr);
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(c);
+    // Wheel zoom
+    const onWheel = (e: WheelEvent) => { e.preventDefault(); zoom.current = Math.max(0.25, Math.min(4, zoom.current * (1 - e.deltaY * 0.001))); };
+    c.addEventListener('wheel', onWheel, { passive: false });
+    return () => { ro.disconnect(); c.removeEventListener('wheel', onWheel); };
   }, []);
 
-  useEffect(() => { ry.current=0.3; rx.current=-0.2; }, [mol]);
+  useEffect(() => { ry.current=0.3; rx.current=-0.2; zoom.current=1.0; }, [mol]);
 
   useEffect(() => {
     const c = ref.current; if (!c) return;
@@ -35,7 +59,9 @@ function MolViewer({ mol }: { mol: Molecule }) {
       const ctx=c.getContext('2d'); if(!ctx) return;
       const dpr=window.devicePixelRatio, W=c.width/dpr, H=c.height/dpr;
       ctx.clearRect(0,0,W,H);
-      const sc=Math.min(W,H)*0.21, fov=440, cx=W/2, cy=H/2;
+      // Auto-scale: fill ~72% of canvas regardless of molecule size
+      const sc = (Math.min(W,H) * 0.36 / molExtent) * zoom.current;
+      const fov=5, cx=W/2, cy=H/2;
       const tf = mol.atoms.map(a => { let p:Vec3=[...a.position as Vec3]; p=rotY(p,ry.current); p=rotX(p,rx.current); const [sx,sy,sz]=proj(p,fov); return {...a,sx:cx+sx*sc,sy:cy-sy*sc,sz,r:a.radius*sc*0.52}; });
       // bonds
       for(const b of mol.bonds){
@@ -57,16 +83,26 @@ function MolViewer({ mol }: { mol: Molecule }) {
     };
     rafRef.current=requestAnimationFrame(draw);
     return ()=>cancelAnimationFrame(rafRef.current);
-  },[mol]);
+  },[mol, molExtent]);
 
   const dn=useCallback((x:number,y:number)=>{auto.current=false;drag.current={x,y};},[]);
   const mv=useCallback((x:number,y:number)=>{if(!drag.current)return;ry.current+=(x-drag.current.x)*.009;rx.current+=(y-drag.current.y)*.009;drag.current={x,y};},[]);
   const up=useCallback(()=>{drag.current=null;setTimeout(()=>{auto.current=true;},1800);},[]);
 
-  return <canvas ref={ref} className="sim-canvas w-full h-full"
-    onMouseDown={e=>dn(e.clientX,e.clientY)} onMouseMove={e=>mv(e.clientX,e.clientY)} onMouseUp={up} onMouseLeave={up}
-    onTouchStart={e=>{e.preventDefault();const t=e.touches[0];dn(t.clientX,t.clientY);}}
-    onTouchMove={e=>{e.preventDefault();const t=e.touches[0];mv(t.clientX,t.clientY);}} onTouchEnd={up} />;
+  const btnCls = "w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:border-orange-500/50 hover:text-white transition-colors text-base font-bold leading-none flex items-center justify-center";
+  return (
+    <div className="relative w-full h-full">
+      <canvas ref={ref} className="sim-canvas w-full h-full" style={{ touchAction:'none', display:'block' }}
+        onMouseDown={e=>dn(e.clientX,e.clientY)} onMouseMove={e=>mv(e.clientX,e.clientY)} onMouseUp={up} onMouseLeave={up}
+        onTouchStart={e=>{e.preventDefault();const t=e.touches[0];dn(t.clientX,t.clientY);}}
+        onTouchMove={e=>{e.preventDefault();const t=e.touches[0];mv(t.clientX,t.clientY);}} onTouchEnd={up} />
+      <div className="absolute bottom-2 right-2 flex flex-col gap-1 z-10">
+        <button className={btnCls} title="Zoom in" onClick={()=>{zoom.current=Math.min(4,zoom.current*1.25);auto.current=false;}}>+</button>
+        <button className={btnCls} title="Zoom out" onClick={()=>{zoom.current=Math.max(0.25,zoom.current*0.8);auto.current=false;}}>−</button>
+        <button className={btnCls+" text-xs"} title="Reset" onClick={()=>{zoom.current=1;ry.current=0.3;rx.current=-0.2;auto.current=true;}}>↺</button>
+      </div>
+    </div>
+  );
 }
 
 const SYLLABI = ['IGCSE', 'CBSE', 'JEE / NEET', 'IB'];

@@ -47,6 +47,16 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
 
   const mol = MOLECULES[molIdx];
 
+  // Auto-fit scale: fill ~72% of canvas for any molecule size
+  const molExtent = (() => {
+    let max = 0;
+    for (const a of mol.atoms) {
+      const r = Math.sqrt(a.position[0]**2 + a.position[1]**2 + a.position[2]**2);
+      max = Math.max(max, r + a.radius * 0.52);
+    }
+    return max || 1;
+  })();
+
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -54,7 +64,7 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
     if (!ctx) return;
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
-    const scale = Math.min(W, H) * (compact ? 0.22 : 0.26) * zoom.current;
+    const scale = (Math.min(W, H) * 0.36 / molExtent) * zoom.current;
     const fov = 5;
 
     ctx.clearRect(0, 0, W, H);
@@ -123,7 +133,7 @@ export default function MoleculeViewer({ compact = false, molIdx: externalIdx, o
         ctx.fillText(a.element, a.sx, a.sy);
       }
     }
-  }, [mol, compact]);
+  }, [mol, compact, molExtent]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

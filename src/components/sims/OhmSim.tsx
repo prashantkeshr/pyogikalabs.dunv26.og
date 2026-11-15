@@ -8,6 +8,7 @@ export default function OhmSim() {
   const [voltage, setVoltage] = useState(6);
   const [resistance, setResistance] = useState(100);
   const [animT, setAnimT] = useState(0);
+  const [cvZoom, setCvZoom] = useState(1);
 
   const current = voltage / resistance;
   const power = voltage * current;
@@ -29,12 +30,11 @@ export default function OhmSim() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const dpr = window.devicePixelRatio;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    const W = canvas.offsetWidth || 400, H = canvas.offsetHeight || 240;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
     const ctx = canvas.getContext('2d')!;
     ctx.scale(dpr, dpr);
-    const W = rect.width, H = rect.height;
     ctx.clearRect(0, 0, W, H);
 
     const pad = 48;
@@ -123,12 +123,11 @@ export default function OhmSim() {
     const canvas = graphRef.current;
     if (!canvas) return;
     const dpr = window.devicePixelRatio;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    const W = canvas.offsetWidth || 400, H = canvas.offsetHeight || 240;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
     const ctx = canvas.getContext('2d')!;
     ctx.scale(dpr, dpr);
-    const W = rect.width, H = rect.height;
     ctx.clearRect(0, 0, W, H);
 
     const pad = { l: 44, r: 20, t: 20, b: 36 };
@@ -192,11 +191,20 @@ export default function OhmSim() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <div className="text-xs text-slate-500 mb-1">Circuit Diagram</div>
-          <canvas ref={canvasRef} className="w-full rounded-lg bg-[#080c18]" style={{ height: 240, display: 'block' }} />
+          <div className="relative overflow-hidden rounded-lg bg-[#080c18]" style={{ height: 240 }}>
+            <canvas ref={canvasRef} className="w-full h-full" style={{ transform: `scale(${cvZoom})`, transformOrigin: 'center', display: 'block' }} />
+            <div className="absolute bottom-2 right-2 flex flex-col gap-1 z-10">
+              <button onClick={() => setCvZoom(z => Math.min(3, z * 1.25))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">+</button>
+              <button onClick={() => setCvZoom(z => Math.max(0.4, z * 0.8))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">−</button>
+              <button onClick={() => setCvZoom(1)} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-400 hover:bg-slate-700/80 hover:text-white transition-colors text-xs flex items-center justify-center">↺</button>
+            </div>
+          </div>
         </div>
         <div>
           <div className="text-xs text-slate-500 mb-1">V-I Graph</div>
-          <canvas ref={graphRef} className="w-full rounded-lg bg-[#080c18]" style={{ height: 240, display: 'block' }} />
+          <div className="relative overflow-hidden rounded-lg bg-[#080c18]" style={{ height: 240 }}>
+            <canvas ref={graphRef} className="w-full h-full" style={{ transform: `scale(${cvZoom})`, transformOrigin: 'center', display: 'block' }} />
+          </div>
         </div>
       </div>
 

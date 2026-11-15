@@ -164,7 +164,14 @@ export default function StatesMatterSim() {
 
   return (
     <div>
-      <canvas ref={canvasRef} className="w-full rounded-lg bg-[#080c18]" style={{ height: 280, display: 'block' }} />
+      <div className="relative overflow-hidden rounded-lg bg-[#080c18]" style={{ height: 280 }}>
+        <canvas ref={canvasRef} className="w-full h-full" style={{ display: 'block' }} />
+        <div className="absolute bottom-2 right-2 flex flex-col gap-1 z-10">
+          <button onClick={() => setZoom(z => Math.min(2.5, z * 1.25))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">+</button>
+          <button onClick={() => setZoom(z => Math.max(0.4, z * 0.8))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">−</button>
+          <button onClick={() => setZoom(1)} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-400 hover:bg-slate-700/80 hover:text-white transition-colors text-xs flex items-center justify-center">↺</button>
+        </div>
+      </div>
 
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>

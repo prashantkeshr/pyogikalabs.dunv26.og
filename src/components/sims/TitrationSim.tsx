@@ -61,6 +61,7 @@ export default function TitrationSim() {
   const [dripping, setDripping] = useState(false);
   const [dropSize, setDropSize] = useState(0.5); // mL/click
   const [phHistory, setPhHistory] = useState<[number, number][]>([[0, calcPH(0, 'strong', 0.1, 0.1, 25)]]);
+  const [cvZoom, setCvZoom] = useState(1);
 
   const pH = calcPH(volAdded, acidType, concAcid, concBase, volAcid);
   const eqVol = concAcid * volAcid / concBase;
@@ -111,14 +112,13 @@ export default function TitrationSim() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const dpr = window.devicePixelRatio;
-    const rect = canvas.getBoundingClientRect();
-    if (canvas.width !== rect.width * dpr) {
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+    const W = canvas.offsetWidth || 400, H = canvas.offsetHeight || 280;
+    if (canvas.width !== W * dpr) {
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
     }
     const ctx = canvas.getContext('2d')!;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const W = rect.width, H = rect.height;
     ctx.clearRect(0, 0, W, H);
 
     const cx = W / 2;
@@ -198,12 +198,11 @@ export default function TitrationSim() {
     const canvas = graphRef.current;
     if (!canvas) return;
     const dpr = window.devicePixelRatio;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    const W = canvas.offsetWidth || 400, H = canvas.offsetHeight || 280;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
     const ctx = canvas.getContext('2d')!;
     ctx.scale(dpr, dpr);
-    const W = rect.width, H = rect.height;
     ctx.clearRect(0, 0, W, H);
 
     const pad = { l: 36, r: 16, t: 16, b: 32 };
@@ -289,11 +288,20 @@ export default function TitrationSim() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <div className="text-xs text-slate-500 mb-1">Burette & Flask</div>
-          <canvas ref={canvasRef} className="w-full rounded-lg bg-[#080c18]" style={{ height: 280, display: 'block' }} />
+          <div className="relative overflow-hidden rounded-lg bg-[#080c18]" style={{ height: 280 }}>
+            <canvas ref={canvasRef} className="w-full h-full" style={{ transform: `scale(${cvZoom})`, transformOrigin: 'center', display: 'block' }} />
+            <div className="absolute bottom-2 right-2 flex flex-col gap-1 z-10">
+              <button onClick={() => setCvZoom(z => Math.min(3, z * 1.25))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">+</button>
+              <button onClick={() => setCvZoom(z => Math.max(0.4, z * 0.8))} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-300 hover:bg-orange-500/40 hover:text-white transition-colors text-base font-bold flex items-center justify-center">−</button>
+              <button onClick={() => setCvZoom(1)} className="w-7 h-7 rounded-lg border border-slate-600/50 bg-slate-900/75 text-slate-400 hover:bg-slate-700/80 hover:text-white transition-colors text-xs flex items-center justify-center">↺</button>
+            </div>
+          </div>
         </div>
         <div>
           <div className="text-xs text-slate-500 mb-1">pH Curve</div>
-          <canvas ref={graphRef} className="w-full rounded-lg bg-[#080c18]" style={{ height: 280, display: 'block' }} />
+          <div className="relative overflow-hidden rounded-lg bg-[#080c18]" style={{ height: 280 }}>
+            <canvas ref={graphRef} className="w-full h-full" style={{ transform: `scale(${cvZoom})`, transformOrigin: 'center', display: 'block' }} />
+          </div>
         </div>
       </div>
 
